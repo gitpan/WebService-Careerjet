@@ -14,7 +14,7 @@ WriteMakefile(
         'LWP::UserAgent' => 2.033,
         'HTTP::Request'  => 1.40,
         'Carp'           => 1.03,
-        'JSON'           => 1.11
+        'JSON'           => 1.05
         
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },

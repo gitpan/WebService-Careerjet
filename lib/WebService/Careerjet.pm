@@ -11,41 +11,41 @@ use JSON;
 
 =head1 NAME
 
-WebService::Careerjet - Remote access to careerjet job database
+WebService::Careerjet - Perl interface to Careerjet's public search API
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
-This module allows you to remotely perform searches in Careerjet job database.
+This module provides a Perl interface to the public search API of Careerjet,
+a vertical search engine for job offers that covers over 20 countries.
+(http://www.careerjet.co.uk/?worldwide)
 
 Example code:
 
     use WebService::Careerjet;
 
-    # Build the interface
-   
-    my $careerjet = WebService::Careerjet->new('http://api.careerjet.co.uk');
-    # To get jobs from USA site, use http://api.careerjet.com 
-    # To get jobs from France site, use http://api.optioncarriere.com
-    
-    # Call API functions ( see functions for details )  
+    # Create Perl interface to API
+    my $careerjet = WebService::Careerjet->new('en_GB');
+
+    # Perform a search
     my $result = $careerjet->search( {
                                       'keyword' => 'perl developer',
                                       'location' => 'london'
                                      } ) ;
 
+    # Go through results
     if ( $result->{'type'} eq 'JOBS' ){
-        print "Got ".$result->{'hits'}." jobs: \n";
-        print " On ".$result->{'pages'}." pages \n" ;
+        print "Found ".$result->{'hits'}." jobs\n";
         my $jobs = $result->{'jobs'} ;
-        foreach my $j ( @$jobs ){
+
+        foreach my $j(@$jobs){
           print "URL         :".$j->{'url'}."\n" ;
           print "TITLE       :".$j->{'title'}."\n" ;
           print "COMPANY     :".$j->{'company'}."\n" ;
@@ -54,42 +54,108 @@ Example code:
           print "DESCRIPTION :".$j->{'description'}."\n" ;
           print "SITE        :".$j->{'site'}."\n" ;
           print "\n";
-    
         }
-      
     }
 
 =head1 FUNCTIONS
 
 =head2 new
 
-Returns a new instance of this api client.
+Creates a Webservice::Careerjet search object for a given UNIX locale.
+Each locale corresponds to an existing Careerjet site and determines
+in which language job-related information is returned as well
+as which default location filter is used. For example if your users
+are primarily dutch-speaking Belgians use "nl_BE".
     
 Usage:
-    
-    my $careerjet = WebService::Careerjet->new() ;
-    # Default: uses the UK site
-    # Or
-    my $careerjet = WebService::Careerjet->new('http://api.careerjet.com');
-    # To use the USA site job offers
+    my $careerjet = WebService::Careerjet->new($locale);
 
-You can use this api for any Careerjet WebSite.
-For instance if you want to use offers from http://www.optioncarriere.com/ ,
-use http://api.optioncarriere.com .
+Available locales:
+    LOCALE     LANGUAGE         DEFAULT LOCATION     CAREERJET SITE
+   
+    cz_CZ      Czech Republic   Czech                http://www.careerjet.cz
+    de_AT      German           Austria              http://www.careerjet.at
+    de_CH      German           Switzerland          http://www.careerjet.ch
+    de_DE      German           Germany              http://www.careerjet.de
+    en_AU      English          Australia            http://www.careerjet.com.au
+    en_CN      English          China                http://www.careerjet.cn
+    en_CN      English          Hong Kong            http://www.careerjet.hk
+    en_IE      English          Ireland              http://www.careerjet.ie
+    en_IN      English          India                http://www.careerjet.co.in
+    en_NZ      English          New Zealand          http://www.careerjet.co.nz
+    en_PH      English          Philippines          http://www.careerjet.ph
+    en_SG      English          Singapore            http://www.careerjet.sg
+    en_GB      English          United Kingdom       http://www.careerjet.co.uk
+    en_US      English          United States        http://www.careerjet.com
+    en_ZA      English          South Africa         http://www.careerjet.co.za
+    en_TW      English          Taiwan               http://www.careerjet.com.tw
+    es_ES      Spanish          Spain                http://www.opcionempleo.com
+    es_ES      Spanish          Mexico               http://www.opcionempleo.com.mx
+    fr_BE      French           Belgium              http://www.optioncarriere.be
+    fr_CH      French           Switzerland          http://www.optioncarriere.ch
+    fr_FR      French           France               http://www.optioncarriere.com
+    fr_LU      French           Luxembourg           http://www.optioncarriere.lu
+    fr_MA      French           Marocco              http://www.optioncarriere.ma
+    it_IT      Italian          Italy                http://www.careerjet.it
+    nl_BE      Dutch            Belgium              http://www.careerjet.be
+    nl_NL      Dutch            Netherlands          http://www.careerjet.nl
+    pl_PL      Polish           Poland               http://www.careerjet.pl
+    pt_PT      Portuguese       Portugal             http://www.careerjet.pt
+    pt_BR      Portuguese       Brazil               http://www.careerjet.com.br
+    sv_SE      Swedish          Sweden               http://www.careerjet.se
+    sk_SK      Slovak           Slovakia             http://www.careerjet.sk
 
 =cut
+   
+my %h_locale2base = ( 
+    cz_CZ  => "http://www.careerjet.cz",
+    de_AT  => "http://www.careerjet.at",
+    de_CH  => "http://www.careerjet.ch",
+    de_DE  => "http://www.careerjet.de",
+    en_AU  => "http://www.careerjet.com.au",
+    en_CN  => "http://www.careerjet.cn",
+    en_CN  => "http://www.careerjet.hk",
+    en_IE  => "http://www.careerjet.ie",
+    en_IN  => "http://www.careerjet.co.in",
+    en_NZ  => "http://www.careerjet.co.nz",
+    en_PH  => "http://www.careerjet.ph",
+    en_SG  => "http://www.careerjet.sg",
+    en_GB  => "http://www.careerjet.co.uk",
+    en_UK  => "http://www.careerjet.co.uk",
+    en_US  => "http://www.careerjet.com",
+    en_ZA  => "http://www.careerjet.co.za",
+    en_TW  => "http://www.careerjet.com.tw",
+    es_ES  => "http://www.opcionempleo.com",
+    es_ES  => "http://www.opcionempleo.com.mx",
+    fr_BE  => "http://www.optioncarriere.be",
+    fr_CH  => "http://www.optioncarriere.ch",
+    fr_FR  => "http://www.optioncarriere.com",
+    fr_LU  => "http://www.optioncarriere.lu",
+    fr_MA  => "http://www.optioncarriere.ma",
+    it_IT  => "http://www.careerjet.it",
+    nl_BE  => "http://www.careerjet.be",
+    nl_NL  => "http://www.careerjet.nl",
+    pl_PL  => "http://www.careerjet.pl",
+    pt_PT  => "http://www.careerjet.pt",
+    pt_BR  => "http://www.careerjet.com.br",
+    sv_SE  => "http://www.careerjet.se",
+    sk_SK  => "http://www.careerjet.sk",
+);
+
 
 sub new{
-    my ($class, $base) = @_ ;
-    $base ||= 'http://api.careerjet.co.uk' ;
-    
+    my ($class, $locale) = @_ ;
+    $locale ||= 'en_GB';
+
+    my $base = $h_locale2base{$locale} || $h_locale2base{en_GB};
+
     my $ua = LWP::UserAgent->new() ;
     $ua->agent($class.'/'.$VERSION);
     
     my $self = {
         'base' => $base,
         'agent' => $ua
-        };
+    };
     
     return bless $self , $class ;
 }
@@ -130,10 +196,9 @@ sub _call{
 
 =head2 search
 
-Performs a search in the Careerjet job database.
-The search options are given as a reference on a hash.
-
-See Options for all details about available options
+Performs a search using Careerjet's public search API.
+Search parameters are passed on as a reference to a hash.
+All options are outlined below.
 
 Example:
     
@@ -143,8 +208,8 @@ Example:
 
     # The result is a job list if the location is not ambiguous
     if ( $result->{'type'} eq 'JOBS' ){
-        print "Got ".$result->{'hits'}." jobs: \n";
-        print " On ".$result->{'pages'}." pages\n";
+        print "Found ".$result->{'hits'}." jobs\n";
+        print "Total number of result pages: ".$result->{'pages'}."\n";
         my $jobs = $result->{'jobs'} ;
         foreach my $j ( @$jobs ){
             print "URL         :".$j->{'url'}."\n" ;
@@ -159,8 +224,8 @@ Example:
     
     }
 
-    # In case the location is ambiguous, result contains
-    # a list of suggested location
+    # If the location is ambiguous, a list of suggest locations
+    # is returned
     if ( $result->{'type'} eq 'LOCATIONS' ){
         print "Suggested locations:\n" ;
         my $locations = $result->{'locations'} ;
@@ -174,41 +239,43 @@ Options:
 
    All options have default values and are not mandatory
    
-       keywords     : Keywords to search in job offers. Example: 'java manager'
-                      Default : none (All offers in the api country)
+       keywords     :   Keywords to match either title, content or company name of job offerings
+                        Examples: 'perl developper', 'ibm', 'software architect'
+                        Default : none
    
-       location     : Location to search job offers in. Examples: 'London' , 'Yorkshire' ..
-                      Default: none ( All offers in the api country)
+       location     :   Loction of requested job postings.
+                        Examples: 'London' , 'Yorkshire', 'France' 
+                        Default: country specified by country code
    
-       sort         : Type of sort. Can be:
-                       'relevance' (default) - most relevant first 
-                       'date'                - freshest offer first 
-                       'salary'              - biggest salary first
+       sort         :   Type of sort. This can be:
+                         'relevance'  - sorted by decreasing relevancy (default)
+                         'date'       - sorted by decreasing date
+                         'salary'     - sorted by decreasing salary
    
-       offset       : Offset of first offer returned in entire result space
-                      should be >= 1 and <= Number of hits
-                      Default : 1 
+       start_num    :   Position of returned job postings within the entire result space.
+                        This should be a least 1 but not more than the total number of job offers.
+                        Default : 1
    
-       pagesize     : Number of offers returned in one call
-                      Default : 20
+       pagesize     :   Number of returned results
+                        Default : 20
 
-       page         : Number of the asked page. 
-                      should be >=1
-                      The max number of pages is given by $result->{'pages'}
-                      If this value is set, the eventually given offset is overrided
+       page         :   Page number of returned job postings within the entire result space.
+                        This can be used instead of start_num. The minimum page number is 1.
+                        The maximum number of pages is given by $result->{'pages'}
+                        If this value is set, it overrides start_num.
    
-       contracttype : Character code for contract type
-                       'p'    - permanent job
-                       'c'    - contract
-                       't'    - temporary
-                       'i'    - training
-                       'v'    - voluntary
-                      Default: none (all contract types)
+       contracttype :   Selected contract type. The following codes can be used: 
+                         'p'    - permanent
+                         'c'    - contract
+                         't'    - temporary
+                         'i'    - training
+                         'v'    - voluntary
+                        Default: none (all contract types)
        
-       contractperiod : Character code for contract work period:
-                         'f'     - Full time
-                         'p'     - Part time
-                        Default: none (all work period)
+       contractperiod : Selected contract period. The following codes can be used: 
+                         'f'     - full time
+                         'p'     - part time
+                        Default: none (all contract periods)
 
 
 =cut
@@ -223,55 +290,41 @@ sub search{
     return $ret ;
 }
 
+=head1 AUTHORS
 
-=head1 AUTHOR
+Jerome Eteve, Thomas Busch
 
-Jerome Eteve, C<< <api at careerjet.com> >>
+=head1 FEEDBACK
 
-=head1 BUGS
-
-Please report any bugs or feature requests to
-C<bug-webservice-careerjet at rt.cpan.org>, or through the web interface at
-L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=WebService-Careerjet>.
-I will be notified, and then you'll automatically be notified of progress on
-your bug as I make changes.
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc WebService::Careerjet
-
-You can also look for information at:
-
-=over 4
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/WebService-Careerjet>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/WebService-Careerjet>
-
-=item * RT: CPAN's request tracker
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=WebService-Careerjet>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/WebService-Careerjet>
-
-=back
-
-=head1 ACKNOWLEDGEMENTS
+Any feedback is welcome. Please send your suggestions to <api at careerjet.com>
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2007 Careerjet Ltd. , all rights reserved.
+Copyright 2007 Careerjet Ltd. All rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
+
+=head1 DISCLAIMER OF WARRANTY
+
+BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE
+SOFTWARE, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE
+STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE
+SOFTWARE "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND
+PERFORMANCE OF THE SOFTWARE IS WITH YOU. SHOULD THE SOFTWARE PROVE DEFECTIVE,
+YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY
+COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE
+SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE LIABLE TO YOU FOR DAMAGES,
+INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING
+OUT OF THE USE OR INABILITY TO USE THE SOFTWARE (INCLUDING BUT NOT LIMITED TO
+LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR
+THIRD PARTIES OR A FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER
+SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGES.
 
 =cut
 
