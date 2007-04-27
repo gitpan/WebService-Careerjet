@@ -15,11 +15,11 @@ WebService::Careerjet - Perl interface to Careerjet's public search API
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 SYNOPSIS
 
@@ -71,8 +71,8 @@ Usage:
     my $careerjet = WebService::Careerjet->new($locale);
 
 Available locales:
+
     LOCALE     LANGUAGE         DEFAULT LOCATION     CAREERJET SITE
-   
     cz_CZ      Czech Republic   Czech                http://www.careerjet.cz
     de_AT      German           Austria              http://www.careerjet.at
     de_CH      German           Switzerland          http://www.careerjet.ch
