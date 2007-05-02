@@ -1,0 +1,113 @@
+#! /usr/bin/perl
+
+use strict ;
+
+use Getopt::Std ;
+use WebService::Careerjet ;
+
+use Text::Wrap;
+$Text::Wrap::columns = 72 ;
+
+our ( $opt_k , $opt_l , $opt_L  , $opt_n , $opt_h , $opt_p ) ;
+
+# default values.
+( $opt_L )  =  ( $ENV{'LANG'} =~ m/(\w\w_\w\w)/ )  ;
+$opt_n = 3 ;
+$opt_p = 1 ;
+
+# get arguments
+getopts('p:l:L:n:h');
+
+if ( $opt_h ){
+    print <<EOT ;
+Copyright 2007 Careerjet Ltd. All rights reserved.
+This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+
+Synopsis:
+
+jobsearch [ -L <lang> ] [ -p <pagenum> ] [ -n <num offers> ] [ -l <location> ] <keywords>
+
+Performs a search in Careerjet job database.
+
+Options:
+    
+    -l : Location of the jobs to search.
+    Default:  Your whole country ( from LANG env variable )
+    
+    -L : Language and country of the job database to search in.
+    Default : LANG env variable
+    
+    -n : Num of offers to display in one query.
+    Default: 3
+
+    -p : Num of page to display. 
+    Default: 1
+    
+Example:
+
+    jobsearch -l london perl developer
+
+
+EOT
+
+exit(0) ;    
+}
+
+# rest of args are keywords
+$opt_k = join(' ', @ARGV ) ;
+
+#print " $opt_k , $opt_l , $opt_L , $opt_n \n" ;
+
+
+# Create Perl interface to API
+my $careerjet = WebService::Careerjet->new($opt_L);
+
+# performs the search
+
+# Perform a search
+my $result = $careerjet->search( {
+    'keywords' => $opt_k ,
+    'location' => $opt_l ,
+    'pagesize' => $opt_n ,
+    'page'     => $opt_p
+    } ) ;
+
+# The result is a job list if the location is not ambiguous
+if ( $result->{'type'} eq 'JOBS' ){
+    print "Found ".$result->{'hits'}." jobs on ".$result->{'pages'}." pages\n\n";
+    my $jobs = $result->{'jobs'} ;
+    foreach my $j ( @$jobs ){
+        print "[ ".$j->{'title'}." ]\n";
+        print $j->{'url'}."\n\n" ;
+        print "     ".$j->{'company'}." - ".$j->{'locations'}."\n";
+        print wrap("       " , "     " , $j->{'description'})."\n" ;
+        print "     ".$j->{'date'}." - ".$j->{'salary'}."\n";
+        print "\n";
+        
+        
+#         print "URL         :".$j->{'url'}."\n" ;
+#         print "TITLE       :".$j->{'title'}."\n" ;
+#         print "COMPANY     :".$j->{'company'}."\n" ;
+#         print "SALARY      :".$j->{'salary'}."\n" ;
+#         print "DATE        :".$j->{'date'}."\n";
+#         print "DESCRIPTION :".$j->{'description'}."\n" ;
+#         print "SITE        :".$j->{'site'}."\n" ;
+#         print "LOCATION    :".$j->{'locations'}."\n" ;
+#         print "\n" ;
+    }
+    
+}
+
+# If the location is ambiguous, a list of suggest locations
+# is returned
+if ( $result->{'type'} eq 'LOCATIONS' ){
+    print "Please specify location:\n" ;
+    my $locations = $result->{'locations'} ;
+    foreach my $l ( @$locations ){
+        print "$l\n" ;
+    }
+}
+
+
+
+

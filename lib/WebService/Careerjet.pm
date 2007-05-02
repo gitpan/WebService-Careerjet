@@ -15,17 +15,22 @@ WebService::Careerjet - Perl interface to Careerjet's public search API
 
 =head1 VERSION
 
-Version 0.03
+Version 0.04
 
 =cut
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 =head1 SYNOPSIS
 
 This module provides a Perl interface to the public search API of Careerjet,
 a vertical search engine for job offers that covers over 20 countries.
 (http://www.careerjet.co.uk/?worldwide)
+
+Command line tool:
+
+    jobsearch [ -L <lang> ] [ -p <pagenum> ] [ -n <num offers> ] [ -l <location> ] <keywords>
+    jobsearch -h
 
 Example code:
 
@@ -36,7 +41,7 @@ Example code:
 
     # Perform a search
     my $result = $careerjet->search( {
-                                      'keyword' => 'perl developer',
+                                      'keywords' => 'perl developer',
                                       'location' => 'london'
                                      } ) ;
 
@@ -53,6 +58,7 @@ Example code:
           print "DATE        :".$j->{'date'}."\n";
           print "DESCRIPTION :".$j->{'description'}."\n" ;
           print "SITE        :".$j->{'site'}."\n" ;
+          print "LOCATIONS   :".$j->{'locations'}."\n" ;
           print "\n";
         }
     }
