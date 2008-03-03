@@ -20,14 +20,14 @@ getopts('p:l:L:n:h');
 
 if ( $opt_h ){
     print <<EOT ;
-Copyright 2007 Careerjet Ltd. All rights reserved.
+Copyright 2007-2008 Careerjet Ltd. All rights reserved.
 This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
 Synopsis:
 
 jobsearch [ -L <lang> ] [ -p <pagenum> ] [ -n <num offers> ] [ -l <location> ] <keywords>
 
-Performs a search in Careerjet job database.
+Performs a search in Careerjet jobs database.
 
 Options:
     

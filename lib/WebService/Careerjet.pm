@@ -15,16 +15,16 @@ WebService::Careerjet - Perl interface to Careerjet's public search API
 
 =head1 VERSION
 
-Version 0.04
+Version 0.05
 
 =cut
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 =head1 SYNOPSIS
 
 This module provides a Perl interface to the public search API of Careerjet,
-a vertical search engine for job offers that covers over 20 countries.
+a vertical search engine for job offers that features job offers in over 50 countries.
 (http://www.careerjet.co.uk/?worldwide)
 
 Command line tool:
@@ -69,9 +69,9 @@ Example code:
 
 Creates a Webservice::Careerjet search object for a given UNIX locale.
 Each locale corresponds to an existing Careerjet site and determines
-in which language job-related information is returned as well
-as which default location filter is used. For example if your users
-are primarily dutch-speaking Belgians use "nl_BE".
+which language job-related information is returned as well
+as which default location filter is used. For example, if your users
+are primarily Dutch-speaking Belgians use "nl_BE".
     
 Usage:
     my $careerjet = WebService::Careerjet->new($locale);
@@ -80,12 +80,13 @@ Available locales:
 
     LOCALE     LANGUAGE         DEFAULT LOCATION     CAREERJET SITE
     cz_CZ      Czech Republic   Czech                http://www.careerjet.cz
+    da_DK      Danish           Denmark              http://www.careerjet.dk
     de_AT      German           Austria              http://www.careerjet.at
     de_CH      German           Switzerland          http://www.careerjet.ch
     de_DE      German           Germany              http://www.careerjet.de
     en_AU      English          Australia            http://www.careerjet.com.au
     en_CN      English          China                http://www.careerjet.cn
-    en_CN      English          Hong Kong            http://www.careerjet.hk
+    en_HK      English          Hong Kong            http://www.careerjet.hk
     en_IE      English          Ireland              http://www.careerjet.ie
     en_IN      English          India                http://www.careerjet.co.in
     en_NZ      English          New Zealand          http://www.careerjet.co.nz
@@ -96,15 +97,17 @@ Available locales:
     en_ZA      English          South Africa         http://www.careerjet.co.za
     en_TW      English          Taiwan               http://www.careerjet.com.tw
     es_ES      Spanish          Spain                http://www.opcionempleo.com
-    es_ES      Spanish          Mexico               http://www.opcionempleo.com.mx
+    es_MX      Spanish          Mexico               http://www.opcionempleo.com.mx
+    fi_FI      Finnish          Finland              http://www.careerjet.fi
     fr_BE      French           Belgium              http://www.optioncarriere.be
     fr_CH      French           Switzerland          http://www.optioncarriere.ch
     fr_FR      French           France               http://www.optioncarriere.com
     fr_LU      French           Luxembourg           http://www.optioncarriere.lu
-    fr_MA      French           Marocco              http://www.optioncarriere.ma
+    fr_MA      French           Morocco              http://www.optioncarriere.ma
     it_IT      Italian          Italy                http://www.careerjet.it
     nl_BE      Dutch            Belgium              http://www.careerjet.be
     nl_NL      Dutch            Netherlands          http://www.careerjet.nl
+    no_NO      Norwegian        Norway               http://www.careerjet.no
     pl_PL      Polish           Poland               http://www.careerjet.pl
     pt_PT      Portuguese       Portugal             http://www.careerjet.pt
     pt_BR      Portuguese       Brazil               http://www.careerjet.com.br
@@ -115,12 +118,13 @@ Available locales:
    
 my %h_locale2base = ( 
     cz_CZ  => "http://www.careerjet.cz",
+    da_DK  => "http://www.careerjet.dk",
     de_AT  => "http://www.careerjet.at",
     de_CH  => "http://www.careerjet.ch",
     de_DE  => "http://www.careerjet.de",
     en_AU  => "http://www.careerjet.com.au",
     en_CN  => "http://www.careerjet.cn",
-    en_CN  => "http://www.careerjet.hk",
+    en_HK  => "http://www.careerjet.hk",
     en_IE  => "http://www.careerjet.ie",
     en_IN  => "http://www.careerjet.co.in",
     en_NZ  => "http://www.careerjet.co.nz",
@@ -132,7 +136,8 @@ my %h_locale2base = (
     en_ZA  => "http://www.careerjet.co.za",
     en_TW  => "http://www.careerjet.com.tw",
     es_ES  => "http://www.opcionempleo.com",
-    es_ES  => "http://www.opcionempleo.com.mx",
+    es_MX  => "http://www.opcionempleo.com.mx",
+    fi_FI  => "http://www.careerjet.fi",
     fr_BE  => "http://www.optioncarriere.be",
     fr_CH  => "http://www.optioncarriere.ch",
     fr_FR  => "http://www.optioncarriere.com",
@@ -141,6 +146,7 @@ my %h_locale2base = (
     it_IT  => "http://www.careerjet.it",
     nl_BE  => "http://www.careerjet.be",
     nl_NL  => "http://www.careerjet.nl",
+    no_NO  => "http://www.careerjet.no",
     pl_PL  => "http://www.careerjet.pl",
     pt_PT  => "http://www.careerjet.pt",
     pt_BR  => "http://www.careerjet.com.br",
@@ -230,7 +236,7 @@ Example:
     
     }
 
-    # If the location is ambiguous, a list of suggest locations
+    # If the location is ambiguous, a list of suggested locations
     # is returned
     if ( $result->{'type'} eq 'LOCATIONS' ){
         print "Suggested locations:\n" ;
@@ -245,8 +251,8 @@ Options:
 
    All options have default values and are not mandatory
    
-       keywords     :   Keywords to match either title, content or company name of job offerings
-                        Examples: 'perl developper', 'ibm', 'software architect'
+       keywords     :   Keywords to match either title, content or company name of job offer
+                        Examples: 'perl developer', 'ibm', 'software architect'
                         Default : none
    
        location     :   Loction of requested job postings.
@@ -300,13 +306,15 @@ sub search{
 
 Jerome Eteve, Thomas Busch
 
+Copyedited by Kira Hesser
+
 =head1 FEEDBACK
 
 Any feedback is welcome. Please send your suggestions to <api at careerjet.com>
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2007 Careerjet Ltd. All rights reserved.
+Copyright 2007-2008 Careerjet Ltd. All rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

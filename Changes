@@ -1,5 +1,10 @@
 Revision history for WebService-Careerjet
 
+0.05    3  Mar 2008
+        Corrected some bad english in documentation
+        Added Denmark, Finland and Norway
+        Fixed Mexican and Honk Kong bad data.
+
 0.04    2  May 2007
         Added CLI tool
 
