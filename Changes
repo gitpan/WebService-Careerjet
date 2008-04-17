@@ -1,5 +1,11 @@
 Revision history for WebService-Careerjet
 
+0.06    17 Apr 2008
+        Fixed typo
+        Added Korea, Japan, China and a few spanish speaking countries
+        Fixed english China.
+        Fixed czech
+
 0.05    3  Mar 2008
         Corrected some bad english in documentation
         Added Denmark, Finland and Norway
