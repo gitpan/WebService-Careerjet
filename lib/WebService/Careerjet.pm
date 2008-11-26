@@ -15,11 +15,11 @@ WebService::Careerjet - Perl interface to Careerjet's public search API
 
 =head1 VERSION
 
-Version 0.06
+Version 0.07
 
 =cut
 
-our $VERSION = '0.06' ;
+our $VERSION = '0.07' ;
 
 =head1 SYNOPSIS
 
@@ -91,13 +91,18 @@ Available locales:
     en_HK      English          Hong Kong            http://www.careerjet.hk
     en_IE      English          Ireland              http://www.careerjet.ie
     en_IN      English          India                http://www.careerjet.co.in
+    en_MY      English          Malaysia             http://www.careerjet.com.my
     en_NZ      English          New Zealand          http://www.careerjet.co.nz
+    en_OM      English          Oman                 http://www.careerjet.com.om
     en_PH      English          Philippines          http://www.careerjet.ph
+    en_PK      English          Pakistan             http://www.careerjet.com.pk
+    en_QA      English          Qatar                http://www.careerjet.com.qa
     en_SG      English          Singapore            http://www.careerjet.sg
     en_GB      English          United Kingdom       http://www.careerjet.co.uk
     en_US      English          United States        http://www.careerjet.com
     en_ZA      English          South Africa         http://www.careerjet.co.za
-    en_TW      English          Taiwan               http://www.careerjet.com.tw
+    en_TW      English          Taiwan               http://www.careerjet.com.tw 
+    en_VN      English          Vietnam              http://www.careerjet.vn
     es_AR      Spanish          Argentina            http://www.opcionempleo.com.ar
     es_BO      Spanish          Bolivia              http://www.opcionempleo.com.bo
     es_CL      Spanish          Chile                http://www.opcionempleo.cl
@@ -120,6 +125,7 @@ Available locales:
     fr_FR      French           France               http://www.optioncarriere.com
     fr_LU      French           Luxembourg           http://www.optioncarriere.lu
     fr_MA      French           Morocco              http://www.optioncarriere.ma
+    hu_HU      Hungarian        Hungary              http://www.careerjet.hu
     it_IT      Italian          Italy                http://www.careerjet.it
     ja_JP      Japanese         Japan                http://www.careerjet.jp
     ko_KR      Korean           Korea                http://www.careerjet.co.kr
@@ -129,9 +135,13 @@ Available locales:
     pl_PL      Polish           Poland               http://www.careerjet.pl
     pt_PT      Portuguese       Portugal             http://www.careerjet.pt
     pt_BR      Portuguese       Brazil               http://www.careerjet.com.br
+    ru_RU      Russian          Russia               http://www.careerjet.ru
+    ru_UA      Russian          Ukraine              http://www.careerjet.com.ua
     sv_SE      Swedish          Sweden               http://www.careerjet.se
     sk_SK      Slovak           Slovakia             http://www.careerjet.sk
     tr_TR      Turkish          Turkey               http://www.careerjet.com.tr
+    uk_UA      Ukrainian        Ukraine              http://www.careerjet.ua
+    vi_VN      Vietnamese       Vietnam              http://www.careerjet.com.vn
     zh_CN      Chinese          China                http://www.careerjet.cn
 
 =cut
@@ -144,19 +154,24 @@ my %h_locale2base = (
     de_DE  => "http://www.careerjet.de",
     en_AE  => "http://www.careerjet.ae",
     en_AU  => "http://www.careerjet.com.au",
-    en_CA  => "http://www.careerjet.ca/",
+    en_CA  => "http://www.careerjet.ca",
     en_CN  => "http://en.careerjet.cn",
     en_HK  => "http://www.careerjet.hk",
     en_IE  => "http://www.careerjet.ie",
     en_IN  => "http://www.careerjet.co.in",
+    en_MY  => "http://www.careerjet.com.my",
     en_NZ  => "http://www.careerjet.co.nz",
+    en_OM  => "http://www.careerjet.com.om",
     en_PH  => "http://www.careerjet.ph",
+    en_PK  => "http://www.careerjet.com.pk",
+    en_QA  => "http://www.careerjet.com.qa",
     en_SG  => "http://www.careerjet.sg",
     en_GB  => "http://www.careerjet.co.uk",
     en_UK  => "http://www.careerjet.co.uk",
     en_US  => "http://www.careerjet.com",
     en_ZA  => "http://www.careerjet.co.za",
     en_TW  => "http://www.careerjet.com.tw",
+    en_VN  => "http://www.careerjet.vn",
     es_AR  => "http://www.opcionempleo.com.ar",
     es_BO  => "http://www.opcionempleo.com.bo",
     es_CL  => "http://www.opcionempleo.cl",
@@ -179,6 +194,7 @@ my %h_locale2base = (
     fr_FR  => "http://www.optioncarriere.com",
     fr_LU  => "http://www.optioncarriere.lu",
     fr_MA  => "http://www.optioncarriere.ma",
+    hu_HU  => "http://www.careerjet.hu",
     it_IT  => "http://www.careerjet.it",
     ja_JP  => "http://www.careerjet.jp",
     ko_KR  => "http://www.careerjet.co.kr",
@@ -188,9 +204,13 @@ my %h_locale2base = (
     pl_PL  => "http://www.careerjet.pl",
     pt_PT  => "http://www.careerjet.pt",
     pt_BR  => "http://www.careerjet.com.br",
+    ru_RU  => "http://www.careerjet.ru",
+    ru_UA  => "http://www.careerjet.com.ua",
     sv_SE  => "http://www.careerjet.se",
     sk_SK  => "http://www.careerjet.sk",
     tr_TR  => "http://www.careerjet.com.tr",
+    uk_UA  => "http://www.careerjet.ua",
+    vi_VN  => "http://www.careerjet.com.vn",
     zh_CN  => "http://www.careerjet.cn",
 );
 
@@ -230,7 +250,7 @@ sub _call{
     if ( $res->is_success() ){
         my $content = $res->content() ;
         my $json = new JSON ;
-        $ret = $json->jsonToObj($content) ;
+        $ret  = $json->decode($content);
     }
     else{
         $ret->{'type'} = 'ERROR' ;

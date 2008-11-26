@@ -15,7 +15,7 @@ WriteMakefile(
         'LWP::UserAgent' => 2.033,
         'HTTP::Request'  => 1.40,
         'Carp'           => 1.03,
-        'JSON'           => 1.05,
+        'JSON'           => 2.07,
         'Getopt::Std'    => 1.05,
         'Text::Wrap'     => 2001.09292
         
