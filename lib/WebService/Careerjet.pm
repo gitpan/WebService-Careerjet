@@ -15,16 +15,16 @@ WebService::Careerjet - Perl interface to Careerjet's public search API
 
 =head1 VERSION
 
-Version 0.07
+Version 0.08
 
 =cut
 
-our $VERSION = '0.07' ;
+our $VERSION = '0.08' ;
 
 =head1 SYNOPSIS
 
 This module provides a Perl interface to the public search API of Careerjet,
-a vertical search engine for job offers that features job offers in over 50 countries.
+a vertical search engine for job offers that features job offers in over 60 countries.
 (http://www.careerjet.co.uk/?worldwide)
 
 Command line tool:
@@ -72,6 +72,9 @@ Each locale corresponds to an existing Careerjet site and determines
 which language job-related information is returned as well
 as which default location filter is used. For example, if your users
 are primarily Dutch-speaking Belgians use "nl_BE".
+
+First two letters : ISO 639-1 language code.
+Last  two letters : ISO 3166-1 alpha-2 language code
     
 Usage:
     my $careerjet = WebService::Careerjet->new($locale);
@@ -91,6 +94,7 @@ Available locales:
     en_HK      English          Hong Kong            http://www.careerjet.hk
     en_IE      English          Ireland              http://www.careerjet.ie
     en_IN      English          India                http://www.careerjet.co.in
+    en_KW      English          Kuwait               http://www.careerjet.com.kw
     en_MY      English          Malaysia             http://www.careerjet.com.my
     en_NZ      English          New Zealand          http://www.careerjet.co.nz
     en_OM      English          Oman                 http://www.careerjet.com.om
@@ -106,6 +110,7 @@ Available locales:
     es_AR      Spanish          Argentina            http://www.opcionempleo.com.ar
     es_BO      Spanish          Bolivia              http://www.opcionempleo.com.bo
     es_CL      Spanish          Chile                http://www.opcionempleo.cl
+    es_CO      Spanish          Colombia             http://www.opcionempleo.com.co
     es_CR      Spanish          Costa Rica           http://www.opcionempleo.co.cr
     es_DO      Spanish          Dominican Republic   http://www.opcionempleo.com.do
     es_EC      Spanish          Ecuador              http://www.opcionempleo.ec
@@ -159,6 +164,7 @@ my %h_locale2base = (
     en_HK  => "http://www.careerjet.hk",
     en_IE  => "http://www.careerjet.ie",
     en_IN  => "http://www.careerjet.co.in",
+    en_KW  => "http://www.careerjet.com.kw",
     en_MY  => "http://www.careerjet.com.my",
     en_NZ  => "http://www.careerjet.co.nz",
     en_OM  => "http://www.careerjet.com.om",
@@ -175,6 +181,7 @@ my %h_locale2base = (
     es_AR  => "http://www.opcionempleo.com.ar",
     es_BO  => "http://www.opcionempleo.com.bo",
     es_CL  => "http://www.opcionempleo.cl",
+    es_CO  => "http://www.opcionempleo.com.co",
     es_CR  => "http://www.opcionempleo.co.cr",
     es_DO  => "http://www.opcionempleo.com.do",
     es_EC  => "http://www.opcionempleo.ec",
@@ -212,6 +219,8 @@ my %h_locale2base = (
     uk_UA  => "http://www.careerjet.ua",
     vi_VN  => "http://www.careerjet.com.vn",
     zh_CN  => "http://www.careerjet.cn",
+                      
+    en_XA => "http://beta.careerjet.net" ,
 );
 
 
