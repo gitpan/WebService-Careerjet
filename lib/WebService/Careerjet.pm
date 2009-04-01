@@ -3,6 +3,8 @@ package WebService::Careerjet;
 use warnings;
 use strict;
 
+use base qw/Class::AutoAccess/ ;
+
 use URI::Escape ;
 use LWP::UserAgent ;
 use HTTP::Request ;
@@ -15,11 +17,11 @@ WebService::Careerjet - Perl interface to Careerjet's public search API
 
 =head1 VERSION
 
-Version 0.08
+Version 0.09
 
 =cut
 
-our $VERSION = '0.08' ;
+our $VERSION = '0.09' ;
 
 =head1 SYNOPSIS
 
@@ -29,7 +31,7 @@ a vertical search engine for job offers that features job offers in over 60 coun
 
 Command line tool:
 
-    jobsearch [ -L <lang> ] [ -p <pagenum> ] [ -n <num offers> ] [ -l <location> ] <keywords>
+    jobsearch [ -L <lang> ] [ -d ] [ -p <pagenum> ] [ -n <num offers> ] [ -l <location> ] <keywords>
     jobsearch -h
 
 Example code:
@@ -234,12 +236,26 @@ sub new{
     $ua->agent($class.'/'.$VERSION);
     
     my $self = {
-        'base' => $base,
-        'agent' => $ua
+        'base' => $base ,
+        'agent' => $ua ,
+        'debug' => 0 ,
     };
     
     return bless $self , $class ;
 }
+
+=head2 debug
+
+Turns on and off the debug mode.
+
+Usage:
+    
+    $careerjet->debug(0) ;
+
+    $careerjet->debug(1) ;
+
+
+=cut
 
 
 sub _call{
@@ -251,6 +267,7 @@ sub _call{
         
     }
     
+    print "GETTING ".$url."\n" if ( $self->debug());
     my $req = HTTP::Request->new( 'GET' => $url ) ;
     
     my $ret = undef ;
@@ -383,7 +400,7 @@ Any feedback is welcome. Please send your suggestions to <api at careerjet.com>
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2007-2008 Careerjet Ltd. All rights reserved.
+Copyright 2007-2009 Careerjet Ltd. All rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

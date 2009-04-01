@@ -1,11 +1,13 @@
 # http://module-build.sourceforge.net/META-spec.html
 #XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
 name:         WebService-Careerjet
-version:      0.08
+version:      0.09
 version_from: lib/WebService/Careerjet.pm
 installdirs:  site
 requires:
     Carp:                          1.03
+    Class::AutoAccess:             0.02
+    Encode:                        2.08
     Getopt::Std:                   1.05
     HTTP::Request:                 1.4
     JSON:                          2.07

@@ -10,6 +10,8 @@ WriteMakefile(
     PL_FILES            => {},
     EXE_FILES           => [ 'bin/jobsearch' ] ,
     PREREQ_PM => {
+        'Class::AutoAccess' => 0.02,
+        'Encode' => 2.08,
         'Test::More' => 0,
         'URI::Escape' => 3.28,
         'LWP::UserAgent' => 2.033,

@@ -2,35 +2,41 @@
 
 use strict ;
 
+use Encode ;
 use Getopt::Std ;
 use WebService::Careerjet ;
 
 use Text::Wrap;
 $Text::Wrap::columns = 72 ;
 
-our ( $opt_k , $opt_l , $opt_L  , $opt_n , $opt_h , $opt_p ) ;
+our ( $opt_k , $opt_l , $opt_L  , $opt_n , $opt_h , $opt_p , $opt_d  ) ;
 
 # default values.
 ( $opt_L )  =  ( $ENV{'LANG'} =~ m/(\w\w_\w\w)/ )  ;
 $opt_n = 3 ;
 $opt_p = 1 ;
+$opt_d ||= 0 ;
 
 # get arguments
-getopts('p:l:L:n:h');
+getopts('dp:l:L:n:h');
 
 if ( $opt_h ){
     print <<EOT ;
-Copyright 2007-2008 Careerjet Ltd. All rights reserved.
+Copyright 2007-2009 Careerjet Ltd. All rights reserved.
 This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
 Synopsis:
 
-jobsearch [ -L <lang> ] [ -p <pagenum> ] [ -n <num offers> ] [ -l <location> ] <keywords>
+jobsearch [ -L <lang> ] [ -p <pagenum> ] [ -n <num offers> ] [ -l <location> ] [ -d ] <keywords>
 
 Performs a search in Careerjet jobs database.
 
-Options:
-    
+Command line arguments are UTF-8 decoded.
+
+Results are output on STDOUT , encoded in UTF-8.
+
+Options:    
+
     -l : Location of the jobs to search.
     Default:  Your whole country ( from LANG env variable )
     
@@ -42,6 +48,8 @@ Options:
 
     -p : Num of page to display. 
     Default: 1
+   
+    -d : Flag for debug mode.
     
 Example:
 
@@ -61,16 +69,19 @@ $opt_k = join(' ', @ARGV ) ;
 
 # Create Perl interface to API
 my $careerjet = WebService::Careerjet->new($opt_L);
+$careerjet->debug($opt_d) ;
 
 # performs the search
 
 # Perform a search
 my $result = $careerjet->search( {
-    'keywords' => $opt_k ,
-    'location' => $opt_l ,
+    'keywords' => Encode::decode_utf8($opt_k) ,
+    'location' => Encode::decode_utf8($opt_l) ,
     'pagesize' => $opt_n ,
     'page'     => $opt_p
     } ) ;
+
+binmode STDOUT , 'UTF-8' ;
 
 # The result is a job list if the location is not ambiguous
 if ( $result->{'type'} eq 'JOBS' ){
