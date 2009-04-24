@@ -13,15 +13,15 @@ use JSON;
 
 =head1 NAME
 
-WebService::Careerjet - Perl interface to Careerjet's public search API
+WebService::Careerjet - Perl interface to Careerjet's public job offers search API
 
 =head1 VERSION
 
-Version 0.09
+Version 0.10
 
 =cut
 
-our $VERSION = '0.09' ;
+our $VERSION = '0.10' ;
 
 =head1 SYNOPSIS
 
@@ -44,7 +44,8 @@ Example code:
     # Perform a search
     my $result = $careerjet->search( {
                                       'keywords' => 'perl developer',
-                                      'location' => 'london'
+                                      'location' => 'london',
+                                      'affid' => '0afaf0173305e4b9',
                                      } ) ;
 
     # Go through results
@@ -64,6 +65,14 @@ Example code:
           print "\n";
         }
     }
+
+=head2 PROXY SETTINGS
+  
+ This module uses LWP::UserAgent for web access. Please refer to LWP proxy HowTo:
+ http://search.cpan.org/~gaas/libwww-perl-5.825/lib/LWP.pm#ENVIRONMENT
+
+=cut
+
 
 =head1 FUNCTIONS
 
@@ -150,6 +159,16 @@ Available locales:
     uk_UA      Ukrainian        Ukraine              http://www.careerjet.ua
     vi_VN      Vietnamese       Vietnam              http://www.careerjet.com.vn
     zh_CN      Chinese          China                http://www.careerjet.cn
+
+
+=head2 agent
+
+Returns or sets the LWP::UserAgent used by this object.
+
+Usage:
+
+    $this->agent() ;
+    $this->agent($myAgent) ;
 
 =cut
    
@@ -337,6 +356,11 @@ Options:
 
    All options have default values and are not mandatory
    
+       affid        :   Affiliate identifier provided by Careerjet if you have a Careerjet partner account.
+                        You can open a careerjet partner account here: 
+                        http://www.careerjet.com/partners/
+                        Default: none
+
        keywords     :   Keywords to match either title, content or company name of job offer
                         Examples: 'perl developer', 'ibm', 'software architect'
                         Default : none
