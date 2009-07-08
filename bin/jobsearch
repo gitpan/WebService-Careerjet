@@ -9,7 +9,7 @@ use WebService::Careerjet ;
 use Text::Wrap;
 $Text::Wrap::columns = 72 ;
 
-our ( $opt_k , $opt_l , $opt_L  , $opt_n , $opt_h , $opt_p , $opt_d  ) ;
+our ( $opt_k , $opt_l , $opt_L  ,  $opt_n , $opt_h , $opt_p , $opt_d  ) ;
 
 # default values.
 ( $opt_L )  =  ( $ENV{'LANG'} =~ m/(\w\w_\w\w)/ )  ;
@@ -18,7 +18,7 @@ $opt_p = 1 ;
 $opt_d ||= 0 ;
 
 # get arguments
-getopts('dp:l:L:n:h');
+getopts('Adp:l:L:n:h');
 
 if ( $opt_h ){
     print <<EOT ;
@@ -42,15 +42,16 @@ Options:
     
     -L : Language and country of the job database to search in.
     Default : LANG env variable
-    
+
     -n : Num of offers to display in one query.
     Default: 3
 
     -p : Num of page to display. 
     Default: 1
-   
-    -d : Flag for debug mode.
     
+    -d : Flag for debug mode.
+
+        
 Example:
 
     jobsearch -l london perl developer
@@ -78,7 +79,7 @@ my $result = $careerjet->search( {
     'keywords' => Encode::decode_utf8($opt_k) ,
     'location' => Encode::decode_utf8($opt_l) ,
     'pagesize' => $opt_n ,
-    'page'     => $opt_p
+    'page'     => $opt_p ,
     } ) ;
 
 binmode STDOUT , 'UTF-8' ;

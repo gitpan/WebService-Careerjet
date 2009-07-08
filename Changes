@@ -1,5 +1,10 @@
 Revision history for WebService-Careerjet
 
+0.11    8 July 2009
+        Fixed doc about ISO
+        Added www.careerjet.com.bd
+        Added www.careerjet-saudi-arabia.com
+
 0.10    24 April 2009
         Added affid parameter for Careerjet registered partners.
         Added documentation about proxy setting.

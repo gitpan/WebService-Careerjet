@@ -17,11 +17,11 @@ WebService::Careerjet - Perl interface to Careerjet's public job offers search A
 
 =head1 VERSION
 
-Version 0.10
+Version 0.11
 
 =cut
 
-our $VERSION = '0.10' ;
+our $VERSION = '0.11' ;
 
 =head1 SYNOPSIS
 
@@ -84,9 +84,15 @@ which language job-related information is returned as well
 as which default location filter is used. For example, if your users
 are primarily Dutch-speaking Belgians use "nl_BE".
 
-First two letters : ISO 639-1 language code.
-Last  two letters : ISO 3166-1 alpha-2 language code
-    
+First two letters : ISO 639-1 Alpha-2 code language code
+
+See http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+.
+Last  two letters : ISO 3166-1 alpha-2 country code
+
+See http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+
+
 Usage:
     my $careerjet = WebService::Careerjet->new($locale);
 
@@ -100,6 +106,7 @@ Available locales:
     de_DE      German           Germany              http://www.careerjet.de
     en_AE      English          United Arab Emirates http://www.careerjet.ae
     en_AU      English          Australia            http://www.careerjet.com.au
+    en_BD      English          Bangladesh           http://www.careerjet.com.bd
     en_CA      English          Canada               http://www.careerjet.ca
     en_CN      English          China                http://en.careerjet.cn
     en_HK      English          Hong Kong            http://www.careerjet.hk
@@ -116,6 +123,7 @@ Available locales:
     en_GB      English          United Kingdom       http://www.careerjet.co.uk
     en_US      English          United States        http://www.careerjet.com
     en_ZA      English          South Africa         http://www.careerjet.co.za
+    en_SA      English          Saudi Arabia         http://www.careerjet-saudi-arabia.com
     en_TW      English          Taiwan               http://www.careerjet.com.tw 
     en_VN      English          Vietnam              http://www.careerjet.vn
     es_AR      Spanish          Argentina            http://www.opcionempleo.com.ar
@@ -180,6 +188,7 @@ my %h_locale2base = (
     de_DE  => "http://www.careerjet.de",
     en_AE  => "http://www.careerjet.ae",
     en_AU  => "http://www.careerjet.com.au",
+    en_BD  => "http://www.careerjet.com.bd",
     en_CA  => "http://www.careerjet.ca",
     en_CN  => "http://en.careerjet.cn",
     en_HK  => "http://www.careerjet.hk",
@@ -197,6 +206,7 @@ my %h_locale2base = (
     en_UK  => "http://www.careerjet.co.uk",
     en_US  => "http://www.careerjet.com",
     en_ZA  => "http://www.careerjet.co.za",
+    en_SA  => "http://www.careerjet-saudi-arabia.com",
     en_TW  => "http://www.careerjet.com.tw",
     en_VN  => "http://www.careerjet.vn",
     es_AR  => "http://www.opcionempleo.com.ar",
@@ -242,6 +252,7 @@ my %h_locale2base = (
     zh_CN  => "http://www.careerjet.cn",
                       
     en_XA => "http://beta.careerjet.net" ,
+    ja_XA => "http://betajp.careerjet.net" ,
 );
 
 
@@ -399,7 +410,7 @@ Options:
                          'p'     - part time
                         Default: none (all contract periods)
 
-
+      
 =cut
 
 sub search{
