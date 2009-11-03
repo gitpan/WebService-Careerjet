@@ -68,6 +68,13 @@ $opt_k = join(' ', @ARGV ) ;
 #print " $opt_k , $opt_l , $opt_L , $opt_n \n" ;
 
 
+my $location =  Encode::decode_utf8($opt_l) ;
+my $location_id  = '' ;
+if ( $location =~ /\[[0-9]+\]/ ){
+    ( $location_id ) = ( $location =~ /\[([0-9]+)\]/ );
+    $location =~ s/\[[^\]]*\]// ;
+}
+
 # Create Perl interface to API
 my $careerjet = WebService::Careerjet->new($opt_L);
 $careerjet->debug($opt_d) ;
@@ -77,7 +84,8 @@ $careerjet->debug($opt_d) ;
 # Perform a search
 my $result = $careerjet->search( {
     'keywords' => Encode::decode_utf8($opt_k) ,
-    'location' => Encode::decode_utf8($opt_l) ,
+    'location' => Encode::decode_utf8($location) ,
+    'location_id' => $location_id ,
     'pagesize' => $opt_n ,
     'page'     => $opt_p ,
     } ) ;
@@ -114,10 +122,11 @@ if ( $result->{'type'} eq 'JOBS' ){
 # is returned
 if ( $result->{'type'} eq 'LOCATIONS' ){
     print "Please specify location:\n" ;
-    my $locations = $result->{'locations'} ;
+    my $locations = $result->{'solveLocations'} ;
     foreach my $l ( @$locations ){
-        print "$l\n" ;
+        print $l->{'name'}." [".$l->{'location_id'}."]\n" ;
     }
+    
 }
 
 

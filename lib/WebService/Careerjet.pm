@@ -17,11 +17,11 @@ WebService::Careerjet - Perl interface to Careerjet's public job offers search A
 
 =head1 VERSION
 
-Version 0.11
+Version 0.12
 
 =cut
 
-our $VERSION = '0.11' ;
+our $VERSION = '0.12' ;
 
 =head1 SYNOPSIS
 
@@ -84,11 +84,11 @@ which language job-related information is returned as well
 as which default location filter is used. For example, if your users
 are primarily Dutch-speaking Belgians use "nl_BE".
 
-First two letters : ISO 639-1 Alpha-2 code language code
+First two letters : ISO 639-1 alpha-2 language code
 
 See http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
-.
-Last  two letters : ISO 3166-1 alpha-2 country code
+
+Last two letters : ISO 3166-1 alpha-2 country code
 
 See http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
 
@@ -356,9 +356,11 @@ Example:
     # is returned
     if ( $result->{'type'} eq 'LOCATIONS' ){
         print "Suggested locations:\n" ;
-        my $locations = $result->{'locations'} ;
+        my $locations = $result->{'solveLocations'} ;
         foreach my $l ( @$locations ){
-            print "$l\n" ;
+            print $l->{'name'}."\n" ; ## For end-user display
+            ## Use $l->{'location_id'} when making next search call
+            ## as 'location_id' parameter (see parameters below)
         }
     }
 
@@ -376,9 +378,12 @@ Options:
                         Examples: 'perl developer', 'ibm', 'software architect'
                         Default : none
    
-       location     :   Loction of requested job postings.
+       location     :   Location of requested job postings.
                         Examples: 'London' , 'Yorkshire', 'France' 
                         Default: country specified by country code
+
+       location_id  :   Location ID. Use values comming from the search function when location is ambiguous.
+                        Default: none
    
        sort         :   Type of sort. This can be:
                          'relevance'  - sorted by decreasing relevancy (default)
