@@ -7,3 +7,4 @@ lib/WebService/Careerjet.pm
 bin/jobsearch
 t/00-load.t
 t/boilerplate.t
+META.json                                Module JSON meta-data (added by MakeMaker)
